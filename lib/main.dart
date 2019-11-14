@@ -1,5 +1,7 @@
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,6 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -26,11 +29,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
+  String _animation = "liquid";
+  bool play = true;
+
+  _changeAnimation() {
     setState(() {
-      _counter++;
+      if (_animation == "circle expand") {
+        _animation = "liquid";
+      } else {
+        _animation = "circle expand";
+      }
+    });
+  }
+
+  _pausePlay() {
+    setState(() {
+      if(play) {
+        play = false;
+      } else {
+        play = true;
+      }
     });
   }
 
@@ -38,11 +57,27 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(play ? _animation : "Paused"),
+            actions: <Widget>[
+              play ?
+              IconButton(icon: Icon(Icons.pause), onPressed: _pausePlay) : IconButton(icon: Icon(Icons.play_arrow), onPressed: _pausePlay)
+            ]
         ),
-        body: Center(
-          child:FlareActor(
-              'assets/Logo_Prevent.flr', animation: 'liquid')
-        ));
+        floatingActionButton: FloatingActionButton(child: Icon(Icons.compare_arrows), onPressed: _changeAnimation,
+        ),
+        body:
+            Center(
+                child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(),
+              child: play ? FlareActor(
+                "assets/Logo_Prevent.flr",
+                animation: _animation,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ) : Image.asset("assets/logo_PS.png"),
+            )),
+         );
   }
 }
